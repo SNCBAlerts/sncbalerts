@@ -4,5 +4,5 @@ namespace drupol\sncbdelay\Event;
 
 class Alert extends AbstractEvent
 {
-    const NAME = 'sncbdelay.alert';
+    const NAME = 'sncbdelay.message.alert';
 }

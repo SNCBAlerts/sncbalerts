@@ -4,5 +4,5 @@ namespace drupol\sncbdelay\Event;
 
 class Canceled extends AbstractEvent
 {
-    const NAME = 'sncbdelay.canceled';
+    const NAME = 'sncbdelay.message.canceled';
 }

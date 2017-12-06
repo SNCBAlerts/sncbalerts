@@ -2,7 +2,11 @@
 namespace drupol\sncbdelay\Http;
 
 use Http\Client\Common\HttpClientDecorator;
+use Http\Client\Common\Plugin\ContentLengthPlugin;
+use Http\Client\Common\Plugin\ContentTypePlugin;
+use Http\Client\Common\Plugin\DecoderPlugin;
 use Http\Client\Common\Plugin\HeaderDefaultsPlugin;
+use Http\Client\Common\Plugin\RedirectPlugin;
 use Http\Client\Common\Plugin\RetryPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\Exception\TransferException;
@@ -53,15 +57,21 @@ class Client implements HttpClient
         $this->messageFactory = is_null($messageFactory) ? MessageFactoryDiscovery::find() : $messageFactory;
         $this->uriFactory = is_null($uriFactory) ? UriFactoryDiscovery::find() : $uriFactory;
 
-        $defaultUserAgent = 'SNCB Twitter Bot Experimentation (pol.dellaiera@gmail.com)';
+        $defaultUserAgent = 'SNCB Alerts (pol.dellaiera@gmail.com)';
 
         $headerDefaultsPlugin = new HeaderDefaultsPlugin([
-        'User-Agent' => $defaultUserAgent
+            'User-Agent' => $defaultUserAgent
         ]);
 
         $this->httpClient = new PluginClient(
             $this->httpClient,
-            [$headerDefaultsPlugin, new RetryPlugin()]
+            [
+                $headerDefaultsPlugin,
+                new RetryPlugin(),
+                new RedirectPlugin(),
+                new ContentLengthPlugin(),
+                new ContentTypePlugin(),
+            ]
         );
     }
 

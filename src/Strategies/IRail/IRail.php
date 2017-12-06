@@ -150,26 +150,26 @@ class IRail extends AbstractStrategy
     {
         $this->getLogger()->debug('Getting departure delays...');
         $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $departuresHeap = new Departures();
 
         foreach ($this->getLiveBoards() as $data) {
             $liveboard = $data['liveboard'];
             $station = $data['station'];
 
-            $this->getLogger()->debug('Getting departure delay...', ['liveboard' => $liveboard, 'station' => $station]);
-
             $departures = array_filter($liveboard['departures']['departure'], function($item) {
-                return $item['delay'] >= 600 || $item['canceled'] != 0;
+                return $item['delay'] > 0 || $item['canceled'] != 0;
             });
 
             foreach ($departures as $departure) {
-                $this->getLogger()->info('DELAY !', $data);
-                $data = ['departure' => $departure, 'station' => $station];
+                $departuresHeap->insert(['departure' => $departure, 'station' => $station]);
+            }
+        }
 
-                if (0 != $departure['canceled']) {
-                    $dispatcher->dispatch(Canceled::NAME, new Canceled($data));
-                } else if (0 < $departure['delay']) {
-                    $dispatcher->dispatch(Delay::NAME, new Delay($data));
-                }
+        foreach ($departuresHeap as $data) {
+            if (0 != $data['departure']['canceled']) {
+                $dispatcher->dispatch(Canceled::NAME, new Canceled($data));
+            } else if (0 < $data['departure']['delay']) {
+                $dispatcher->dispatch(Delay::NAME, new Delay($data));
             }
         }
     }
@@ -185,10 +185,8 @@ class IRail extends AbstractStrategy
         $currentTime = time();
 
         foreach ($this->getDisturbances() as $disturbance) {
-            if ($currentTime < $disturbance['timestamp']) {
-                $this->getLogger()->info('DISTURBANCE !', $disturbance);
-                $data = ['disturbance' => $disturbance];
-                $dispatcher->dispatch(Alert::NAME, new Alert($data));
+            if (abs($currentTime - $disturbance['timestamp']) <= 1200) {
+                $dispatcher->dispatch(Alert::NAME, new Alert(['disturbance' => $disturbance]));
             }
         }
     }

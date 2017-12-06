@@ -12,7 +12,8 @@ parameters:
   telegram:
     bot_api_key: 504392540:AAH1HrVhmYx_hSYbSqir8iz7SoZd6q67iNM
     bot_username: sncbalerts_bot
-
+    public_channel: -1001220806719
+  locale: 'en'
 
 services:
     # default configuration for services in *this* file
@@ -27,7 +28,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     drupol\sncbdelay\:
         resource: '../src/*'
-        exclude: '../src/{Entity,Migrations,Tests}'
+        exclude: '../src/{Migrations,Tests}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -46,5 +47,11 @@ services:
         public: true
         arguments: ['@logger', '@sncbdelay.httpclient']
 
-    drupol\sncbdelay\EventSubscriber\Debug:
-        arguments: ['@twig', '@cache.app']
+    drupol\sncbdelay\EventSubscriber\Debug\Alert:
+        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+    drupol\sncbdelay\EventSubscriber\Debug\Canceled:
+        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+    drupol\sncbdelay\EventSubscriber\Debug\Custom:
+        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+    drupol\sncbdelay\EventSubscriber\Debug\Delay:
+        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']

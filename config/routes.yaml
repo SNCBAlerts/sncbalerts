@@ -1,3 +1,2 @@
-#index:
-#    path: /
-#    defaults: { _controller: 'App\Controller\DefaultController::index' }
+sncbdelay_telegram:
+    resource: '@SNCBDelayTelegramBundle/Resources/config/routing/routes.yaml'

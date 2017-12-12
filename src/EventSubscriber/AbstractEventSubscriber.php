@@ -50,7 +50,8 @@ abstract class AbstractEventSubscriber implements EventSubscriberInterface, Cont
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Doctrine\ORM\EntityManager $doctrine
      */
-    public function __construct(ContainerInterface $container, \Twig_Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManager $doctrine) {
+    public function __construct(ContainerInterface $container, \Twig_Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManager $doctrine)
+    {
         $this->container = $container;
         $this->twig = $twig;
         $this->logger = $logger;

@@ -14,8 +14,8 @@ abstract class AbstractStrategy implements ContainerAwareInterface
     /**
      * AbstractStrategy constructor.
      */
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
     /**
@@ -37,10 +37,12 @@ abstract class AbstractStrategy implements ContainerAwareInterface
     }
 
     /**
-     * @return object
      * @throws \Exception
+     *
+     * @return object
      */
-    public function getLogger() {
+    public function getLogger()
+    {
         return $this->logger;
     }
 }

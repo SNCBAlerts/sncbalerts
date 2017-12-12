@@ -3,7 +3,6 @@
 namespace drupol\sncbdelay\Command;
 
 use drupol\sncbdelay\Event\Custom;
-use drupol\sncbdelay\Strategies\IRail\IRail;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;

@@ -11,7 +11,7 @@ abstract class AbstractAlertEventSubscriber extends AbstractEventSubscriber
      */
     public static function getSubscribedEvents()
     {
-        return array('sncbdelay.message.alert' => 'handler');
+        return ['sncbdelay.message.alert' => 'handler'];
     }
 
     /**
@@ -19,13 +19,14 @@ abstract class AbstractAlertEventSubscriber extends AbstractEventSubscriber
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function handler(Event $event) {
+    public function handler(Event $event)
+    {
         $disturbance = $event->getStorage()['disturbance'];
         date_default_timezone_set('Europe/Brussels');
 
         $currentTime = time();
 
-        $uniqid = sha1(serialize([Static::class, $disturbance]));
+        $uniqid = sha1(serialize([static::class, $disturbance]));
 
         $cache = $this->cache->getItem($uniqid);
 
@@ -42,21 +43,23 @@ abstract class AbstractAlertEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @return mixed|string
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return mixed|string
      */
-    public function getMessage(Event $event) {
+    public function getMessage(Event $event)
+    {
         $disturbance = $event->getStorage()['disturbance'];
 
         return $this->twig->render(
             'debug/alert.twig',
-            array(
+            [
                 'title' => $disturbance['title'],
                 'description' => $disturbance['description'],
                 'url' => $disturbance['link'],
-            )
+            ]
         );
     }
 }

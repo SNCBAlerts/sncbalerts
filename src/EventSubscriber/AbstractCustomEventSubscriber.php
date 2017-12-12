@@ -11,7 +11,7 @@ abstract class AbstractCustomEventSubscriber extends AbstractEventSubscriber
      */
     public static function getSubscribedEvents()
     {
-        return array('sncbdelay.message.custom' => 'handler');
+        return ['sncbdelay.message.custom' => 'handler'];
     }
 
     /**
@@ -27,10 +27,11 @@ abstract class AbstractCustomEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @return mixed|string
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return mixed|string
      */
     public function getMessage(Event $event)
     {
@@ -38,9 +39,9 @@ abstract class AbstractCustomEventSubscriber extends AbstractEventSubscriber
 
         return $this->twig->render(
             'debug/custom.twig',
-            array(
+            [
                 'message' => $message,
-            )
+            ]
         );
     }
 }

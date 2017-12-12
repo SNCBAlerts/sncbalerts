@@ -16,14 +16,16 @@ abstract class AbstractEvent extends Event
      *
      * @param $data
      */
-    public function __construct($data) {
+    public function __construct($data)
+    {
         $this->storage = $data;
     }
 
     /**
      * @return array
      */
-    public function getStorage() {
+    public function getStorage()
+    {
         return $this->storage;
     }
 }

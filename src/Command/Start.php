@@ -25,12 +25,16 @@ class Start extends ContainerAwareCommand
             return 0;
         }
 
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher->dispatch(\drupol\sncbdelay\Event\Start::NAME);
+
         /** @var IRail $strategy */
         $strategy = $this->getContainer()->get('sncbdelay.strategy');
         $strategy->setContainer($this->getContainer());
         $strategy->getAlerts();
         $strategy->getDelays();
 
+        $dispatcher->dispatch(\drupol\sncbdelay\Event\End::NAME);
         $this->release();
     }
 }

@@ -83,9 +83,6 @@
             "ref": "9d60c231a92e69c68b89897813ec4931d0697b1f"
         }
     },
-    "gecko-packages/gecko-php-unit": {
-        "version": "v3.0"
-    },
     "guzzlehttp/guzzle": {
         "version": "6.3.0"
     },
@@ -196,9 +193,6 @@
             "version": "4.0",
             "ref": "aaddfdf43cdecd4cf91f992052d76c2cadc04543"
         }
-    },
-    "symfony/asset": {
-        "version": "v4.0.1"
     },
     "symfony/cache": {
         "version": "v4.0.1"

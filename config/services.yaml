@@ -40,6 +40,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
     sncbdelay.httpclient:
+        public: true
         class: drupol\sncbdelay\Http\Client
         arguments: [null, null, null, null, '@logger', '@cache.app']
 

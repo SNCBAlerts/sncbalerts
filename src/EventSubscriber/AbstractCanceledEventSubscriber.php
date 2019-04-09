@@ -33,9 +33,9 @@ abstract class AbstractCanceledEventSubscriber extends AbstractEventSubscriber
         $cache2 = $this->cache->getItem($uniqid2);
 
         if (
+            $departure['time'] > $currentTime &&
             !$cache1->isHit() &&
-            !$cache2->isHit() &&
-            $departure['time'] > $currentTime
+            !$cache2->isHit()
         ) {
             $this->process($event);
 
@@ -50,9 +50,9 @@ abstract class AbstractCanceledEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return mixed|string
      */

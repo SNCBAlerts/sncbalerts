@@ -33,11 +33,11 @@ abstract class AbstractDelayEventSubscriber extends AbstractEventSubscriber
         $cache2 = $this->cache->getItem($uniqid2)->expiresAfter(new \DateInterval('PT10M'));
 
         if (
-            !$cache1->isHit() &&
-            !$cache2->isHit() &&
             $departure['time'] > $currentTime - 600 &&
-            abs($departure['time'] - $currentTime) <= 1200 &&
-            $departure['delay'] >= 600
+            $departure['delay'] >= 600 &&
+            !$cache2->isHit() &&
+            !$cache1->isHit() &&
+            abs($departure['time'] - $currentTime) <= 1200
         ) {
             $this->process($event);
 
@@ -52,9 +52,9 @@ abstract class AbstractDelayEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return mixed|string
      */

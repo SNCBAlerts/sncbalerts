@@ -3,12 +3,9 @@
 namespace drupol\sncbdelay\Strategies;
 
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-abstract class AbstractStrategy implements ContainerAwareInterface
+abstract class AbstractStrategy
 {
-    use ContainerAwareTrait;
     use LoggerAwareTrait;
 
     /**
@@ -19,21 +16,11 @@ abstract class AbstractStrategy implements ContainerAwareInterface
     }
 
     /**
-     * Get the container.
-     *
-     * @return \Symfony\Component\DependencyInjection\ContainerBuilder
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getProperties()
     {
-        return $this->getContainer()->getParameterBag()->all();
+        return $this->parameters->all();
     }
 
     /**

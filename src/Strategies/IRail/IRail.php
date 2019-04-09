@@ -7,15 +7,20 @@ use drupol\sncbdelay\Event\Canceled;
 use drupol\sncbdelay\Event\Delay;
 use drupol\sncbdelay\Strategies\AbstractStrategy;
 use drupol\sncbdelay\Strategies\IRail\Storage\Departures;
-use Http\Client\HttpClient;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpClient\HttpClientTrait;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class IRail extends AbstractStrategy
 {
+    use HttpClientTrait;
+
     /**
      * The HTTP client.
      *
-     * @var \Http\Client\HttpClient
+     * @var \Symfony\Contracts\HttpClient\HttpClientInterface
      */
     protected $httpclient;
 
@@ -32,37 +37,40 @@ class IRail extends AbstractStrategy
     protected $linesMatrix;
 
     /**
+     * @var \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface
+     */
+    protected $parameters;
+
+    /**
+     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * IRail constructor.
      *
+     * @param \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface $parameters
+     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
      * @param \Psr\Log\LoggerInterface $logger
      *   The logger.
-     * @param \Http\Client\HttpClient $httpclient
+     * @param \Symfony\Contracts\HttpClient\HttpClientInterface $httpclient
      *   The HTTP client.
      * @param \drupol\sncbdelay\Strategies\IRail\Storage\Departures $departures
      *   The departures storage.
      */
-    public function __construct(LoggerInterface $logger, HttpClient $httpclient, Departures $departures)
+    public function __construct(ContainerBagInterface $parameters, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, HttpClientInterface $httpclient, Departures $departures)
     {
-        $this->setLogger($logger);
-        $this->httpclient = $httpclient;
-        $this->departures = $departures;
-        $this->linesMatrix = $this->getLinesMatrix();
+        parent::__construct();
 
         date_default_timezone_set('Europe/Brussels');
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($name, array $query = [])
-    {
-        $properties = $this->getProperties();
-        $name = strtolower($name);
+        $this->setLogger($logger);
+        $this->eventDispatcher = $eventDispatcher;
+        $this->httpclient = $httpclient;
+        $this->departures = $departures;
+        $this->parameters = $parameters;
+        $this->linesMatrix = $this->getLinesMatrix();
 
-        $uri = sprintf('%s/%s/', $properties['api']['uri'], $name);
-
-        return $this->httpclient->getUriFactory()->createUri($uri)
-            ->withQuery(http_build_query($query));
     }
 
     /**
@@ -74,14 +82,19 @@ class IRail extends AbstractStrategy
     {
         $this->getLogger()->debug('Getting all stations...');
 
-        $result = $this->httpclient->request('get', $this->get('stations', ['format' => 'json', 'lang' => 'en']));
+        $stations = $this->httpclient->request(
+            'GET',
+            'http://api.irail.be/stations/',
+            [
+                'query' =>
+                    [
+                        'format' => 'json',
+                        'lang' => 'en',
+                    ],
+            ]
+        )->toArray();
 
-        $stations = json_decode($result->getBody()->__toString(), true);
-
-        foreach ($stations['station'] as $station) {
-            $this->getLogger()->debug('Processing station...', ['station' => $station]);
-            yield $station;
-        }
+        yield from new \ArrayIterator($stations['station']);
     }
 
     /**
@@ -93,13 +106,25 @@ class IRail extends AbstractStrategy
      */
     public function getLiveBoard($stationId)
     {
-        $time = date('hi');
-        $date = date('dmy');
+        $request = $this->httpclient->request(
+            'GET',
+            'http://api.irail.be/liveboard/',
+            [
+                'query' => [
+                    'id' => $stationId,
+                    'format' => 'json',
+                    'alert' => 'true',
+                    'time' => date('hi'),
+                    'date' => date('hmy'),
+                ],
+            ]
+        );
 
-        return $this->httpclient->request('get', $this->get(
-            'liveboard',
-            ['id' => $stationId, 'format' => 'json', 'alert' => 'true', 'time' => $time, 'date' => $date]
-        ));
+        if (200 === $request->getStatusCode()) {
+            return $request->toArray();
+        }
+
+        return false;
     }
 
     /**
@@ -111,14 +136,17 @@ class IRail extends AbstractStrategy
     {
         $this->getLogger()->debug('Getting disturbances...');
 
-        $url = $this->get(
-            'disturbances',
-            ['format' => 'json']
+        $result = $this->httpclient->request(
+            'GET',
+            'http://api.irail.be/disturbances/',
+            [
+                'query' => [
+                    'format' => 'json',
+                ],
+            ]
         );
 
-        $result = $this->httpclient->request('get', $url);
-
-        $disturbances = json_decode($result->getBody()->__toString(), true);
+        $disturbances = $result->toArray();
 
         $disturbances += ['disturbance' => []];
 
@@ -140,14 +168,18 @@ class IRail extends AbstractStrategy
         foreach ($this->getAllStations() as $station) {
             $liveboard = $this->getLiveBoard($station['id']);
 
-            if (200 != $liveboard->getStatusCode()) {
+            if ($liveboard === false) {
                 $this->getLogger()->debug('Skipping liveboard for station', ['station' => $station]);
 
                 continue;
             }
 
             $this->getLogger()->debug('Processing liveboard...', ['liveboard' => $liveboard, 'station' => $station]);
-            yield ['station' => $station, 'liveboard' => json_decode($liveboard->getBody()->__toString(), true)];
+
+            yield [
+                'station' => $station,
+                'liveboard' => $liveboard
+            ];
         }
     }
 
@@ -157,7 +189,6 @@ class IRail extends AbstractStrategy
     public function getDelays()
     {
         $this->getLogger()->debug('Getting departure delays...');
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
         $currentTime = time();
 
         foreach ($this->getLiveBoards() as $data) {
@@ -182,9 +213,9 @@ class IRail extends AbstractStrategy
 
         foreach ($this->departures as $data) {
             if (0 != $data['departure']['canceled']) {
-                $dispatcher->dispatch(Canceled::NAME, new Canceled($data));
+                $this->eventDispatcher->dispatch(Canceled::NAME, new Canceled($data));
             } elseif (0 < $data['departure']['delay']) {
-                $dispatcher->dispatch(Delay::NAME, new Delay($data));
+                $this->eventDispatcher->dispatch(Delay::NAME, new Delay($data));
             }
         }
     }
@@ -195,13 +226,11 @@ class IRail extends AbstractStrategy
     public function getAlerts()
     {
         $this->getLogger()->debug('Getting alerts...');
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
-
         $currentTime = time();
 
         foreach ($this->getDisturbances() as $disturbance) {
             if (abs($currentTime - $disturbance['timestamp']) <= 1200) {
-                $dispatcher->dispatch(Alert::NAME, new Alert(['disturbance' => $disturbance]));
+                $this->eventDispatcher->dispatch(Alert::NAME, new Alert(['disturbance' => $disturbance]));
             }
         }
     }
@@ -211,13 +240,15 @@ class IRail extends AbstractStrategy
      */
     public function getLinesMatrix()
     {
-        $url = $this->httpclient->getUriFactory()->createUri('/sparql')
-            ->withHost('query.wikidata.org')
-            ->withScheme('https')
-            ->withQuery(
-                http_build_query(
-                    [
-                        'query' => 'SELECT
+        $request = $this->httpclient->request(
+            'GET',
+            'https://query.wikidata.org/sparql',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+                'query' => [
+                    'query'=> 'SELECT
                           DISTINCT ?name
                           (GROUP_CONCAT(DISTINCT ?lineLabel; SEPARATOR = "|") AS ?lineLabels)
                         WHERE {
@@ -232,12 +263,11 @@ class IRail extends AbstractStrategy
                           }
                         }
                         GROUP BY ?iRail ?name ?sLabel'
-                    ]
-                )
-            );
+                ],
+            ]
+        );
 
-        $response = $this->httpclient->request('get', $url, ['Accept' => 'application/json']);
-        $result = json_decode($response->getBody()->__toString(), TRUE);
+        $result = $request->toArray();
 
         $datas = [];
         foreach ($result['results']['bindings'] as $data)

@@ -24,15 +24,11 @@ abstract class AbstractAlertEventSubscriber extends AbstractEventSubscriber
         $disturbance = $event->getStorage()['disturbance'];
         date_default_timezone_set('Europe/Brussels');
 
-        $currentTime = time();
-
-        $uniqid = sha1(serialize([static::class, $disturbance]));
-
-        $cache = $this->cache->getItem($uniqid);
+        $cache = $this->cache->getItem(sha1(serialize([static::class, $disturbance])));
 
         if (
             !$cache->isHit() &&
-            $disturbance['timestamp'] > $currentTime - 60*60
+            $disturbance['timestamp'] > time() - 60*60
         ) {
             $this->process($event);
             $cache->set($event);
@@ -43,9 +39,9 @@ abstract class AbstractAlertEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return mixed|string
      */

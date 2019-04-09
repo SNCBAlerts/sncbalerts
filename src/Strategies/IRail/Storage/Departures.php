@@ -14,7 +14,7 @@ class Departures extends \SplHeap
      */
     protected function compare($value1, $value2)
     {
-        if ($value1['departure']['time'] == $value2['departure']['time']) {
+        if ($value1['departure']['time'] === $value2['departure']['time']) {
             return $value2['departure']['delay'] - $value1['departure']['delay'];
         }
 

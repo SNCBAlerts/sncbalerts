@@ -41,9 +41,7 @@ services:
 
     sncbdelay.httpclient:
         public: true
-        class: drupol\sncbdelay\Http\Client
-        arguments: [null, null, null, null, '@logger', '@cache.app']
-
+        class: Symfony\Component\HttpClient\NativeHttpClient
 
     sncbdelay.departures:
         class: drupol\sncbdelay\Strategies\IRail\Storage\Departures
@@ -51,13 +49,13 @@ services:
     sncbdelay.strategy:
         class: drupol\sncbdelay\Strategies\IRail\IRail
         public: true
-        arguments: ['@logger', '@sncbdelay.httpclient', '@sncbdelay.departures']
+        arguments: ['@parameter_bag', '@event_dispatcher', '@logger', '@sncbdelay.httpclient', '@sncbdelay.departures']
 
     drupol\sncbdelay\EventSubscriber\Debug\Alert:
-        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+        arguments: ['@parameter_bag', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
     drupol\sncbdelay\EventSubscriber\Debug\Canceled:
-        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+        arguments: ['@parameter_bag', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
     drupol\sncbdelay\EventSubscriber\Debug\Custom:
-        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+        arguments: ['@parameter_bag', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
     drupol\sncbdelay\EventSubscriber\Debug\Delay:
-        arguments: ['@service_container', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']
+        arguments: ['@parameter_bag', '@twig', '@logger', '@cache.app', '@doctrine.orm.entity_manager']

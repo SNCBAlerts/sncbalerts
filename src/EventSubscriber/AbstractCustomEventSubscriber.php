@@ -16,8 +16,6 @@ abstract class AbstractCustomEventSubscriber extends AbstractEventSubscriber
 
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function handler(Event $event)
     {
@@ -27,9 +25,9 @@ abstract class AbstractCustomEventSubscriber extends AbstractEventSubscriber
     /**
      * @param \Symfony\Component\EventDispatcher\Event $event
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      *
      * @return mixed|string
      */

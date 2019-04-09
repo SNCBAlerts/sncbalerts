@@ -3,15 +3,18 @@
 namespace drupol\sncbdelay\Command;
 
 use drupol\sncbdelay\Event\Custom;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class Send extends ContainerAwareCommand
+class Send extends Command implements ContainerAwareInterface
 {
     use LockableTrait;
+    use ContainerAwareTrait;
 
     protected function configure()
     {
@@ -23,5 +26,9 @@ class Send extends ContainerAwareCommand
     {
         $dispatch = $this->getContainer()->get('event_dispatcher');
         $dispatch->dispatch(Custom::NAME, new Custom(['message' => $input->getArgument('message')]));
+    }
+
+    public function getContainer() {
+        return $this->container;
     }
 }

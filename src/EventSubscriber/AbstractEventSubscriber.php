@@ -4,24 +4,14 @@ namespace drupol\sncbdelay\EventSubscriber;
 
 use Doctrine\ORM\EntityManager;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Twig\Environment;
 
-abstract class AbstractEventSubscriber implements EventSubscriberInterface, ContainerAwareInterface
+abstract class AbstractEventSubscriber implements EventSubscriberInterface
 {
-    use ContainerAwareTrait;
-
-    /**
-     * The container.
-     *
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var \Twig_Environment
      */
@@ -43,16 +33,22 @@ abstract class AbstractEventSubscriber implements EventSubscriberInterface, Cont
     protected $cache;
 
     /**
+     * @var \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface
+     */
+    protected $parameters;
+
+    /**
      * AbstractEventSubscriber constructor.
      *
-     * @param \Psr\Container\ContainerInterface $container
-     * @param \Twig_Environment $twig
+     * @param \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface $parameters
+     * @param \Twig\Environment $twig
      * @param \Psr\Log\LoggerInterface $logger
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
      * @param \Doctrine\ORM\EntityManager $doctrine
      */
-    public function __construct(ContainerInterface $container, \Twig_Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManager $doctrine)
+    public function __construct(ContainerBagInterface $parameters, Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManager $doctrine)
     {
-        $this->container = $container;
+        $this->parameters = $parameters;
         $this->twig = $twig;
         $this->logger = $logger;
         $this->doctrine = $doctrine;
@@ -77,14 +73,6 @@ abstract class AbstractEventSubscriber implements EventSubscriberInterface, Cont
         $this->logger->notice(
             $this->getMessage($event)
         );
-    }
-
-    /**
-     * @return \Psr\Container\ContainerInterface
-     */
-    public function getContainer()
-    {
-        return $this->container;
     }
 
     /**

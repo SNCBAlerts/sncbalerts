@@ -2,15 +2,17 @@
 
 namespace drupol\sncbdelay\Command;
 
-use drupol\sncbdelay\Strategies\IRail\IRail;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class Start extends ContainerAwareCommand
+class Start extends Command implements ContainerAwareInterface
 {
     use LockableTrait;
+    use ContainerAwareTrait;
 
     protected function configure()
     {
@@ -30,11 +32,14 @@ class Start extends ContainerAwareCommand
 
         /** @var IRail $strategy */
         $strategy = $this->getContainer()->get('sncbdelay.strategy');
-        $strategy->setContainer($this->getContainer());
         $strategy->getAlerts();
         $strategy->getDelays();
 
         $dispatcher->dispatch(\drupol\sncbdelay\Event\End::NAME);
         $this->release();
+    }
+
+    public function getContainer() {
+        return $this->container;
     }
 }

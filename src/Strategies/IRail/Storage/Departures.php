@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace drupol\sncbdelay\Strategies\IRail\Storage;
 
 class Departures extends \SplHeap
@@ -12,7 +14,7 @@ class Departures extends \SplHeap
      *
      * @return int
      */
-    protected function compare($value1, $value2)
+    protected function compare(array $value1, array $value2)
     {
         if ($value1['departure']['time'] === $value2['departure']['time']) {
             return $value2['departure']['delay'] - $value1['departure']['delay'];

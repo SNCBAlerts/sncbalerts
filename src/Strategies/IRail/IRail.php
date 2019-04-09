@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace drupol\sncbdelay\Strategies\IRail;
 
 use drupol\sncbdelay\Event\Alert;
@@ -57,6 +59,11 @@ class IRail extends AbstractStrategy
      *   The HTTP client.
      * @param \drupol\sncbdelay\Strategies\IRail\Storage\Departures $departures
      *   The departures storage.
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function __construct(ContainerBagInterface $parameters, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, HttpClientInterface $httpclient, Departures $departures)
     {
@@ -74,9 +81,12 @@ class IRail extends AbstractStrategy
     }
 
     /**
-     * @throws \Exception
-     *
      * @return \Generator
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getAllStations()
     {
@@ -98,13 +108,16 @@ class IRail extends AbstractStrategy
     }
 
     /**
-     * @param array $station
-     *
-     * @throws \Exception
+     * @param $stationId
      *
      * @return mixed
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function getLiveBoard($stationId)
+    public function getLiveBoard(string $stationId)
     {
         $request = $this->httpclient->request(
             'GET',
@@ -128,9 +141,12 @@ class IRail extends AbstractStrategy
     }
 
     /**
-     * @throws \Exception
-     *
      * @return \Generator
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getDisturbances()
     {
@@ -146,9 +162,7 @@ class IRail extends AbstractStrategy
             ]
         );
 
-        $disturbances = $result->toArray();
-
-        $disturbances += ['disturbance' => []];
+        $disturbances = $result->toArray() + ['disturbance' => []];
 
         foreach ($disturbances['disturbance'] as $disturbance) {
             $this->getLogger()->debug('Processing disturbance...', ['disturbance' => $disturbance]);
@@ -157,9 +171,12 @@ class IRail extends AbstractStrategy
     }
 
     /**
-     * @throws \Exception
-     *
      * @return \Generator
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getLiveBoards()
     {
@@ -174,33 +191,34 @@ class IRail extends AbstractStrategy
                 continue;
             }
 
-            $this->getLogger()->debug('Processing liveboard...', ['liveboard' => $liveboard, 'station' => $station]);
-
-            yield [
-                'station' => $station,
-                'liveboard' => $liveboard
-            ];
+            yield [$station, $liveboard];
         }
     }
 
     /**
-     * @throws \Exception
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getDelays()
     {
         $this->getLogger()->debug('Getting departure delays...');
         $currentTime = time();
 
-        foreach ($this->getLiveBoards() as $data) {
-            $liveboard = $data['liveboard'];
-            $station = $data['station'];
-
-            $departures = array_filter($liveboard['departures']['departure'], function ($item) use ($currentTime){
-                return (($item['delay'] > 0 || 0 != $item['canceled']) && ($item['time'] < $currentTime + 3600*2));
-            });
+        foreach ($this->getLiveBoards() as [$station, $liveboard]) {
+            $departures = array_filter(
+                $liveboard['departures']['departure'],
+                static function ($item) use ($currentTime) {
+                    return (($item['delay'] > 0 || '0' !== $item['canceled']) && ($item['time'] < $currentTime + 3600*2));
+                }
+            );
 
             foreach ($departures as $departure) {
-                $arguments = ['departure' => $departure, 'station' => $station];
+                $arguments = [
+                    'departure' => $departure,
+                    'station' => $station
+                ];
 
                 $arguments['lines'] = $this->getLines(
                     parse_url($station['@id'], PHP_URL_PATH),
@@ -212,16 +230,23 @@ class IRail extends AbstractStrategy
         }
 
         foreach ($this->departures as $data) {
-            if (0 != $data['departure']['canceled']) {
+            if ('0' !== $data['departure']['canceled']) {
                 $this->eventDispatcher->dispatch(Canceled::NAME, new Canceled($data));
-            } elseif (0 < $data['departure']['delay']) {
+                continue;
+            }
+
+            if (0 < $data['departure']['delay']) {
                 $this->eventDispatcher->dispatch(Delay::NAME, new Delay($data));
+                continue;
             }
         }
     }
 
     /**
-     * @throws \Exception
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function getAlerts()
     {
@@ -229,13 +254,20 @@ class IRail extends AbstractStrategy
         $currentTime = time();
 
         foreach ($this->getDisturbances() as $disturbance) {
-            if (abs($currentTime - $disturbance['timestamp']) <= 1200) {
-                $this->eventDispatcher->dispatch(Alert::NAME, new Alert(['disturbance' => $disturbance]));
+            if (abs($currentTime - $disturbance['timestamp']) > 1200) {
+                continue;
             }
+
+            $this->eventDispatcher->dispatch(Alert::NAME, new Alert(['disturbance' => $disturbance]));
         }
     }
 
     /**
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     *
      * @return array
      */
     public function getLinesMatrix()
@@ -274,9 +306,14 @@ class IRail extends AbstractStrategy
         {
             $path = parse_url($data['name']['value'], PHP_URL_PATH);
 
-            $datas[$path] = array_unique(array_map(function($line) {
-                return filter_var($line, FILTER_SANITIZE_NUMBER_INT);
-            }, explode('|', $data['lineLabels']['value'])));
+            $datas[$path] = array_unique(
+                array_map(
+                    static function ($line) {
+                        return filter_var($line, FILTER_SANITIZE_NUMBER_INT);
+                    },
+                    explode('|', $data['lineLabels']['value'])
+                )
+            );
         }
 
         return $datas;
@@ -288,7 +325,7 @@ class IRail extends AbstractStrategy
      *
      * @return array
      */
-    public function getLines($uriStation1, $uriStation2)
+    public function getLines(string $uriStation1, string $uriStation2): array
     {
         $this->linesMatrix += [
             $uriStation1 => [],
@@ -296,10 +333,12 @@ class IRail extends AbstractStrategy
         ];
 
         return array_values(
-            array_unique(array_intersect(
+            array_unique(
+                array_intersect(
                     $this->linesMatrix[$uriStation1],
                     $this->linesMatrix[$uriStation2]
                 )
-            ));
+            )
+        );
     }
 }

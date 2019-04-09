@@ -8,21 +8,21 @@
     "packages": [
         {
             "name": "abraham/twitteroauth",
-            "version": "0.7.4",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/abraham/twitteroauth.git",
-                "reference": "c6f9e692552dd037b2324ed0dfa28a4e60875acf"
+                "reference": "ed70c5de0ea33439fde124d0d7109460bbb59a71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/abraham/twitteroauth/zipball/c6f9e692552dd037b2324ed0dfa28a4e60875acf",
-                "reference": "c6f9e692552dd037b2324ed0dfa28a4e60875acf",
+                "url": "https://api.github.com/repos/abraham/twitteroauth/zipball/ed70c5de0ea33439fde124d0d7109460bbb59a71",
+                "reference": "ed70c5de0ea33439fde124d0d7109460bbb59a71",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "php": "^5.6 || ^7.0"
+                "php": "^5.6 || ^7.0 || ^7.1 || ^7.2"
             },
             "require-dev": {
                 "phpmd/phpmd": "~2.6",
@@ -58,7 +58,7 @@
                 "social",
                 "twitter"
             ],
-            "time": "2017-06-30T22:02:01+00:00"
+            "time": "2019-01-20T17:52:37+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -1255,23 +1255,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SNCBAlerts/sncbdelay_telegram.git",
-                "reference": "e48a2ee3b76d7139f4e8e979a250d2155fd503bb"
+                "reference": "f8115baf9be6e73fd83d06765fd18f3aafa1ec49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_telegram/zipball/e48a2ee3b76d7139f4e8e979a250d2155fd503bb",
-                "reference": "e48a2ee3b76d7139f4e8e979a250d2155fd503bb",
+                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_telegram/zipball/f8115baf9be6e73fd83d06765fd18f3aafa1ec49",
+                "reference": "f8115baf9be6e73fd83d06765fd18f3aafa1ec49",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "^1.8",
+                "doctrine/doctrine-bundle": "^1",
                 "irazasyed/telegram-bot-sdk": "^2.2",
                 "symfony/framework-bundle": "~2.7|~3.0|^4.0",
-                "symfony/routing": "^4.0",
-                "twig/twig": "^2.4"
+                "symfony/routing": "^4",
+                "twig/twig": "^2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.8"
+                "friendsofphp/php-cs-fixer": "^2.14"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -1287,7 +1287,7 @@
                 }
             ],
             "description": "TODO",
-            "time": "2018-04-26T14:13:12+00:00"
+            "time": "2019-04-09T16:35:41+00:00"
         },
         {
             "name": "drupol/sncbdelay_twitter",
@@ -1295,24 +1295,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SNCBAlerts/sncbdelay_twitter.git",
-                "reference": "cef11204971b047140bda9fbd4c981d1c7cfabf6"
+                "reference": "034220e62990e8e2b90ae09d1d268375f1464816"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_twitter/zipball/cef11204971b047140bda9fbd4c981d1c7cfabf6",
-                "reference": "cef11204971b047140bda9fbd4c981d1c7cfabf6",
+                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_twitter/zipball/034220e62990e8e2b90ae09d1d268375f1464816",
+                "reference": "034220e62990e8e2b90ae09d1d268375f1464816",
                 "shasum": ""
             },
             "require": {
-                "abraham/twitteroauth": "^0.7.2",
+                "abraham/twitteroauth": "^1",
                 "ext-mbstring": "*",
-                "kylewm/brevity": "^0.2.10",
-                "symfony/framework-bundle": "~2.7|~3.0|^4.0",
-                "twig/twig": "^2.4"
+                "kylewm/brevity": "^0.2",
+                "symfony/framework-bundle": "^4",
+                "twig/twig": "^2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.8",
-                "phpspec/phpspec": "^4.2"
+                "friendsofphp/php-cs-fixer": "^2.14"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -1328,7 +1327,7 @@
                 }
             ],
             "description": "TODO",
-            "time": "2018-01-16T11:32:30+00:00"
+            "time": "2019-04-09T19:21:47+00:00"
         },
         {
             "name": "drupol/sncbdelay_web",

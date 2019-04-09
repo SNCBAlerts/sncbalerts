@@ -1,6 +1,6 @@
 {
     "abraham/twitteroauth": {
-        "version": "0.7.4"
+        "version": "1.0.1"
     },
     "composer/semver": {
         "version": "1.5.0"

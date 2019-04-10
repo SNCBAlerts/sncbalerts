@@ -1,0 +1,5 @@
+sncbdelay_telegram:
+    resource: '@SNCBDelayTelegramBundle/Resources/config/routing/routes.yaml'
+
+sncbdelay_web:
+    resource: '@SNCBDelayWebBundle/Resources/config/routing/routes.yaml'

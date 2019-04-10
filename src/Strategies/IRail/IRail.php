@@ -209,8 +209,6 @@ class IRail extends AbstractStrategy
             return $request->toArray();
         }
 
-        dump($stationId);
-
         return false;
     }
 

@@ -5,14 +5,14 @@ parameters:
   api:
     uri: https://api.irail.be
   twitter:
-    consumer_key: 2N8R23GSKGGRYHX7vT3Ze8E1T
-    consumer_secret: AP3WdetO8drxGYoTd1aSxK2TpJ6o8pHqX27l1Ut03Z2POFCXMz
-    access_token: 	938130671373049856-z7X6aBxayBuAGojmwKAEF7utig90u6w
-    access_token_secret: sgUju2JJa0gkr9pcV3MxzLxAIapb1INKxrom8Z3t3HRVB
+    consumer_key: '%env(TWITTER_CONSUMER_KEY)%'
+    consumer_secret: '%env(TWITTER_CONSUMER_SECRET)%'
+    access_token: '%env(TWITTER_ACCESS_TOKEN)%'
+    access_token_secret: '%env(TWITTER_ACCESS_TOKEN_SECRET)%'
   telegram:
-    bot_api_key: 504392540:AAH1HrVhmYx_hSYbSqir8iz7SoZd6q67iNM
-    bot_username: sncbalerts_bot
-    public_channel: -1001220806719
+    bot_api_key: '%env(TELEGRAM_BOT_API_KEY)%'
+    bot_username: '%env(TELEGRAM_BOT_USERNAME)%'
+    public_channel: '%env(TELEGRAM_PUBLIC_CHANNEL)%'
   locale: 'en'
 
 services:

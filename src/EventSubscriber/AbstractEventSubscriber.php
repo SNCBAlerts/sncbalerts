@@ -3,6 +3,7 @@
 namespace drupol\sncbdelay\EventSubscriber;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -13,7 +14,7 @@ use Twig\Environment;
 abstract class AbstractEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var \Twig_Environment
+     * @var \Twig\Environment
      */
     protected $twig;
 
@@ -23,7 +24,7 @@ abstract class AbstractEventSubscriber implements EventSubscriberInterface
     protected $logger;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $doctrine;
 
@@ -44,9 +45,9 @@ abstract class AbstractEventSubscriber implements EventSubscriberInterface
      * @param \Twig\Environment $twig
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Doctrine\ORM\EntityManager $doctrine
+     * @param \Doctrine\ORM\EntityManagerInterface $doctrine
      */
-    public function __construct(ContainerBagInterface $parameters, Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManager $doctrine)
+    public function __construct(ContainerBagInterface $parameters, Environment $twig, LoggerInterface $logger, CacheItemPoolInterface $cache, EntityManagerInterface $doctrine)
     {
         $this->parameters = $parameters;
         $this->twig = $twig;

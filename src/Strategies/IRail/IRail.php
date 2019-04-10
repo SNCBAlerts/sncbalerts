@@ -77,7 +77,6 @@ class IRail extends AbstractStrategy
         $this->departures = $departures;
         $this->parameters = $parameters;
         $this->linesMatrix = $this->getLinesMatrix();
-
     }
 
     /**
@@ -103,6 +102,79 @@ class IRail extends AbstractStrategy
                     ],
             ]
         )->toArray();
+
+        $stations['station'] = array_combine(
+            array_column(
+                $stations['station'],
+                'id'
+            ),
+            $stations['station']
+        );
+
+        // In order to avoid 404.
+        // TODO: use a static var.
+        $ignore = [
+            'BE.NMBS.007015400',
+            'BE.NMBS.007015440',
+            'BE.NMBS.008011090', // Frankfurt am Main Flughafen
+            'BE.NMBS.008039904', // Düsseldorf Flughafen Hbf
+            'BE.NMBS.008400180', // Dordrecht
+            'BE.NMBS.008400280', // Den Haag HS
+            'BE.NMBS.008500010', // Basel
+            'BE.NMBS.008718201', // Colmar
+            'BE.NMBS.008718206', // Mulhouse
+            'BE.NMBS.008718213', // Saint-Louis-Haut-Rhin
+            'BE.NMBS.008719100', // Thionville
+            'BE.NMBS.008719203', // Metz
+            'BE.NMBS.008721222', // Saverne
+            'BE.NMBS.008721405', // Selestat
+            'BE.NMBS.008727100', // Paris Nord
+            'BE.NMBS.008728105', // Croix l'Allumette
+            'BE.NMBS.008728671', // Croix Wasquehal
+            'BE.NMBS.008772202', // Lyon-Perrache TGV
+            'BE.NMBS.008774100', // Chambéry-Challes-les-Eaux
+            'BE.NMBS.008774164', // Albertville
+            'BE.NMBS.008774172', // Moûtiers-Salins-Brides-les-Bai
+            'BE.NMBS.008774176', // Aime-la-Plagne
+            'BE.NMBS.008774177', // Landry
+            'BE.NMBS.008774179', // Bourg-Saint-Maurice
+            'BE.NMBS.008775500', // Toulon
+            'BE.NMBS.008775544', // Les Arcs - Draguignan
+            'BE.NMBS.008775605', // Nice Ville
+            'BE.NMBS.008775752', // Saint-Raphaël-Valescure
+            'BE.NMBS.008775762', // Cannes
+            'BE.NMBS.008775767', // Antibes
+            'BE.NMBS.008776290', // Lyon-Saint Exupéry TGV
+            'BE.NMBS.008777320', // Sète
+            'BE.NMBS.008778100', // Béziers
+            'BE.NMBS.008778110', // Narbonne
+            'BE.NMBS.008778127', // Agde
+            'BE.NMBS.008778400', // Perpignan
+            'BE.NMBS.008821022', // Antwerpen-Oost
+            'BE.NMBS.008821030', // Antwerpen-Dam
+            'BE.NMBS.008821048', // Antwerpen-Haven
+            'BE.NMBS.008821154', // Mortsel-Deurnesteenweg
+            'BE.NMBS.008829009', // Essen-Grens
+            'BE.NMBS.008841525', // Liège-Saint-Lambert
+            'BE.NMBS.008841558', // Liège-Carré
+            'BE.NMBS.008847258', // Y.renory
+            'BE.NMBS.008849023', // Hergenrath-Frontiere
+            'BE.NMBS.008849064', // Vise-Frontiere
+            'BE.NMBS.008849072', // Gouvy-Frontiere
+            'BE.NMBS.008861168', // Ham-sur-Sambre
+            'BE.NMBS.008864923', // Florée
+            'BE.NMBS.008869047', // Athus-Frontiere
+            'BE.NMBS.008869054', // Sterpenich-Frontiere
+            'BE.NMBS.008869088', // Aubange-Frontiere-Luxembourg
+            'BE.NMBS.008889011', // Mouscron-Frontiere
+            'BE.NMBS.008889045', // Blandain-Frontiere
+            'BE.NMBS.008891173', // Zeebrugge-Strand
+            'BE.NMBS.008891611', // Zwankendamme
+        ];
+
+        foreach ($ignore as $ignored_station) {
+            unset($stations['station'][$ignored_station]);
+        }
 
         yield from new \ArrayIterator($stations['station']);
     }
@@ -136,6 +208,8 @@ class IRail extends AbstractStrategy
         if (200 === $request->getStatusCode()) {
             return $request->toArray();
         }
+
+        dump($stationId);
 
         return false;
     }
@@ -294,7 +368,7 @@ class IRail extends AbstractStrategy
                             ?iRail rdfs:label ?name
                           }
                         }
-                        GROUP BY ?iRail ?name ?sLabel'
+                        GROUP BY ?iRail ?name ?sLabel',
                 ],
             ]
         );

@@ -42,7 +42,7 @@ services:
     sncbdelay.httpclient:
         public: true
         class: Symfony\Component\HttpClient\NativeHttpClient
-        arguments: [[], '10']
+        #arguments: [[], '10']
 
     sncbdelay.departures:
         class: drupol\sncbdelay\Strategies\IRail\Storage\Departures

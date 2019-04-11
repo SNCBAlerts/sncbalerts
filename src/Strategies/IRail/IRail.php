@@ -199,7 +199,7 @@ class IRail extends AbstractStrategy
                     'id' => $stationId,
                     'format' => 'json',
                     'alert' => 'true',
-                    'time' => date('Hi'),
+                    'time' => date('hi'),
                     'date' => date('hmy'),
                 ],
             ]
@@ -308,7 +308,6 @@ class IRail extends AbstractStrategy
             }
 
             if (0 < $data['departure']['delay']) {
-                dump($data);
                 $this->eventDispatcher->dispatch(Delay::NAME, new Delay($data));
                 continue;
             }

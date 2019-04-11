@@ -1255,12 +1255,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SNCBAlerts/sncbdelay_telegram.git",
-                "reference": "430c49cad300d9d22bf4c92988131490e00d9ec0"
+                "reference": "0dc8875bd8ca517f8da513cd44e9847e0030bfde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_telegram/zipball/430c49cad300d9d22bf4c92988131490e00d9ec0",
-                "reference": "430c49cad300d9d22bf4c92988131490e00d9ec0",
+                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_telegram/zipball/0dc8875bd8ca517f8da513cd44e9847e0030bfde",
+                "reference": "0dc8875bd8ca517f8da513cd44e9847e0030bfde",
                 "shasum": ""
             },
             "require": {
@@ -1287,7 +1287,7 @@
                 }
             ],
             "description": "TODO",
-            "time": "2019-04-10T07:14:26+00:00"
+            "time": "2019-04-11T07:09:48+00:00"
         },
         {
             "name": "drupol/sncbdelay_twitter",
@@ -1295,12 +1295,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SNCBAlerts/sncbdelay_twitter.git",
-                "reference": "034220e62990e8e2b90ae09d1d268375f1464816"
+                "reference": "cae1384fd885fd46b5b40ec5c86bf15d6892b83d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_twitter/zipball/034220e62990e8e2b90ae09d1d268375f1464816",
-                "reference": "034220e62990e8e2b90ae09d1d268375f1464816",
+                "url": "https://api.github.com/repos/SNCBAlerts/sncbdelay_twitter/zipball/cae1384fd885fd46b5b40ec5c86bf15d6892b83d",
+                "reference": "cae1384fd885fd46b5b40ec5c86bf15d6892b83d",
                 "shasum": ""
             },
             "require": {
@@ -1327,7 +1327,7 @@
                 }
             ],
             "description": "TODO",
-            "time": "2019-04-09T19:21:47+00:00"
+            "time": "2019-04-11T07:06:55+00:00"
         },
         {
             "name": "drupol/sncbdelay_web",
@@ -1550,16 +1550,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.8.9",
+            "version": "v5.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "7224ed316427ae5f67c4888679bbf7f6e7773660"
+                "reference": "384b4daa2c738455f249c7f6f368197a5118ec43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/7224ed316427ae5f67c4888679bbf7f6e7773660",
-                "reference": "7224ed316427ae5f67c4888679bbf7f6e7773660",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/384b4daa2c738455f249c7f6f368197a5118ec43",
+                "reference": "384b4daa2c738455f249c7f6f368197a5118ec43",
                 "shasum": ""
             },
             "require": {
@@ -1590,20 +1590,20 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2019-03-06T19:39:19+00:00"
+            "time": "2019-04-03T08:58:07+00:00"
         },
         {
             "name": "illuminate/support",
-            "version": "v5.8.9",
+            "version": "v5.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "e275519c58246cc4011c798f9b0a0f83aae2aab7"
+                "reference": "601ca709bb612482848a9f330aa66490b5d85fef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/e275519c58246cc4011c798f9b0a0f83aae2aab7",
-                "reference": "e275519c58246cc4011c798f9b0a0f83aae2aab7",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/601ca709bb612482848a9f330aa66490b5d85fef",
+                "reference": "601ca709bb612482848a9f330aa66490b5d85fef",
                 "shasum": ""
             },
             "require": {
@@ -1651,7 +1651,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2019-04-01T19:02:05+00:00"
+            "time": "2019-04-08T12:54:41+00:00"
         },
         {
             "name": "irazasyed/telegram-bot-sdk",
@@ -3300,12 +3300,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "b709518d17a8c0552b1e33e83cfa908b1b9bc3c9"
+                "reference": "d2b835a665aba04e31f0bfe10fb290210943e8cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/b709518d17a8c0552b1e33e83cfa908b1b9bc3c9",
-                "reference": "b709518d17a8c0552b1e33e83cfa908b1b9bc3c9",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/d2b835a665aba04e31f0bfe10fb290210943e8cd",
+                "reference": "d2b835a665aba04e31f0bfe10fb290210943e8cd",
                 "shasum": ""
             },
             "require": {
@@ -3354,7 +3354,7 @@
             ],
             "description": "Symfony HttpClient component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-09T09:46:29+00:00"
+            "time": "2019-04-10T15:10:32+00:00"
         },
         {
             "name": "symfony/http-foundation",
